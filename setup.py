@@ -18,7 +18,7 @@ setup(
     name="galaxykit",
     packages={"galaxykit"},
     url="https://github.com/hendersonreed/galaxykit/",
-    version="0.0.1-rc-2",
+    version="0.0.1",
     install_requires=["requests", "simplejson"],
     extra_requires={"dev": ["black", "pylint", "flake8"]},
 )
