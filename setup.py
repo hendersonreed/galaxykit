@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-te
 """
 setuptools script for installing galaxykit
 """
+
 import pathlib
 from setuptools import setup
 
