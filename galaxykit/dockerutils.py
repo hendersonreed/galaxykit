@@ -14,10 +14,18 @@ class DockerClient:
     engine = ""
     registry = ""
 
-    def __init__(self, user, password, engine, registry):
+    def __init__(self, user="", password="", engine="podman", registry=""):
         self.engine = engine
         self.registry = registry
-        run([engine, "login", registry, "--username", user, "--password", password])
+
+        if registry != "":
+            self.engine = engine
+            self.registry = registry
+            run([engine, "login", registry, "--username", user, "--password", password])
+        else:  # if registry == "", then assume standard docker hub
+            if user != "" and password != "":
+                # we only login to dockerhub if user/pass are provided
+                run([engine, "login", "--username", user, "--password", password])
 
     def pull_image(self, image_name):
         """
