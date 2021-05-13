@@ -38,12 +38,6 @@ class DockerClient:
         """
         run([self.engine, "pull", self.registry + image_name])
 
-    def pull_image_dockerhub(self, image_name):
-        """
-        pull an image from dockerhub
-        """
-        run([self.engine, "pull", image_name])
-
     def tag_image(self, image_name, newtag, version="latest"):
         """
         Tags an image with the given tag
