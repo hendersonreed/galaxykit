@@ -1,15 +1,15 @@
 """
 client.py contains the wrapping interface for all the other modules (aside from cli.py)
 """
-from simplejson.errors import JSONDecodeError
 import sys
 from urllib.parse import urlparse
+from simplejson.errors import JSONDecodeError
 
 import requests
 
-from . import dockerutils
-from . import users
-from . import groups
+import dockerutils
+import users
+import groups
 
 
 class GalaxyClient:
@@ -29,7 +29,7 @@ class GalaxyClient:
             resp = requests.post(galaxy_root + "v3/auth/token/", auth=(user, password))
             try:
                 self.token = resp.json().get("token")
-            except JSONDecodeError as e:
+            except JSONDecodeError:
                 print(f"Failed to fetch token: {resp.text}", file=sys.stderr)
             self.headers = {
                 "accept": "application/json",
@@ -42,7 +42,10 @@ class GalaxyClient:
                 )
 
                 self.docker_client = dockerutils.DockerClient(
-                    user, password, container_engine, container_registry
+                    (user, password),
+                    container_engine,
+                    container_registry,
+                    tls_verify=False,
                 )
 
     def pull_image(self, image_name):

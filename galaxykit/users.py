@@ -2,12 +2,20 @@
 Functions for creating, updating, and deleting users.
 """
 
-import requests
 import json
+import requests
 
 
 def get_or_create_user(
-        galaxy_root, headers, username, password, group, fname="", lname="", email="", superuser=False
+    galaxy_root,
+    headers,
+    username,
+    password,
+    group,
+    fname="",
+    lname="",
+    email="",
+    superuser=False,
 ):
     """
     A simple utility to create a new user. All the arguments aside from
@@ -25,7 +33,15 @@ def get_or_create_user(
     user_resp = requests.get(user_url, headers=headers).json()
     if user_resp["meta"]["count"] == 0:
         create_user(
-                galaxy_root, headers, username, password, group, fname, lname, email
+            galaxy_root,
+            headers,
+            username,
+            password,
+            group,
+            fname,
+            lname,
+            email,
+            superuser,
         )
         user_resp = requests.get(user_url, headers=headers).json()
 
@@ -33,7 +49,15 @@ def get_or_create_user(
 
 
 def create_user(
-    galaxy_root, headers, username, password, group, fname="", lname="", email="", superuser=False
+    galaxy_root,
+    headers,
+    username,
+    password,
+    group,
+    fname="",
+    lname="",
+    email="",
+    superuser=False,
 ):
     """
     Create a new user. All the arguments aside from
@@ -46,7 +70,7 @@ def create_user(
         "pulp_href": f"/pulp/api/v3/groups/{group_id}",
     }
     """
-    if group is None:
+    if group == {}:
         group = []
     else:
         group = [group]
@@ -68,14 +92,24 @@ def create_user(
     }
     # return the response so the caller has access to the id and other
     # metadata from the response.
-    requests.post(
+    created = requests.post(
         f"{galaxy_root}_ui/v1/users/",
         create_body,
         headers=headers,
     )
+    if created.status_code != 200:
+        raise Exception(
+            f"Unable to create user. Failed with status code {created.status_code}"
+        )
 
 
 def delete_user(galaxy_root, headers, user):
+    """
+    Deletes a user.
+
+    Note: performs two requests, one to get the id of the user and a second request to
+    really delete it.
+    """
     user_id = get_user_id(galaxy_root, headers, user)
     delete_url = f"{galaxy_root}_ui/v1/users/{user_id}/"
     headers = {

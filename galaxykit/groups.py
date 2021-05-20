@@ -1,3 +1,6 @@
+"""
+Utility functions for dealing with groups
+"""
 import requests
 import json
 
@@ -26,8 +29,11 @@ def create_group(galaxy_root, headers, group_name):
 
 
 def delete_group(galaxy_root, headers, group_name):
-    # need to get the group id,
-    # then make the url and requests.delete it
+    """
+    Deletes a group.
+
+    Note: this function performs two requests, one to find the group id and one to delete the group
+    """
     group_id = find_group(galaxy_root, headers, group_name)[0]["id"]
     delete_url = f"{galaxy_root}_ui/v1/groups/{group_id}"
     return requests.delete(delete_url, headers=headers)
