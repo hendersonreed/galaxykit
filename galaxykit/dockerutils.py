@@ -14,7 +14,9 @@ class DockerClient:
     engine = ""
     registry = ""
 
-    def __init__(self, auth=None, engine="podman", registry="docker.io/library/", additional_args=[]):
+    def __init__(
+        self, auth=None, engine="podman", registry="docker.io/library/", tls_verify=True
+    ):
         """
         auth should be `(username, password)` for logging into the docker registry.
 
@@ -24,17 +26,29 @@ class DockerClient:
         self.registry = registry
 
         if auth:  # we only need to auth if creds are supplied
-            run_args = [
-                engine,
-                "login",
-                registry,
-                "--username",
-                auth[0],
-                "--password",
-                auth[1],
-            ] + additional_args
+            if engine == "podman":
+                run_args = [
+                    engine,
+                    "login",
+                    registry,
+                    "--username",
+                    auth[0],
+                    "--password",
+                    auth[1],
+                    f"--tls-verify={tls_verify}"  # this is only valid/necessary
+                    # with podman
+                ]
+            else:
+                run_args = [
+                    engine,
+                    "login",
+                    registry,
+                    "--username",
+                    auth[0],
+                    "--password",
+                    auth[1],
+                ]
             run(run_args)
-            # we need to be able to pass random args at the end, with the **args thing, right?
 
     def pull_image(self, image_name):
         """

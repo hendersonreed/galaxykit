@@ -30,7 +30,12 @@ class GalaxyClient:
     docker_client = None
 
     def __init__(
-        self, galaxy_root, auth=None, container_engine=None, container_registry=None
+        self,
+        galaxy_root,
+        auth=None,
+        container_engine=None,
+        container_registry=None,
+        container_tls_verify=True,
     ):
         self.galaxy_root = galaxy_root
         self.headers = {}
@@ -57,7 +62,10 @@ class GalaxyClient:
                 )
 
                 self.docker_client = dockerutils.DockerClient(
-                    (username, password), container_engine, container_registry
+                    (username, password),
+                    container_engine,
+                    container_registry,
+                    tls_verify=container_tls_verify,
                 )
 
     def _http(self, method, path, *args, **kwargs):
