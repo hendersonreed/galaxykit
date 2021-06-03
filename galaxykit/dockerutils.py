@@ -60,7 +60,15 @@ class DockerClient:
         """
         Tags an image with the given tag
         """
-        run([self.engine, "image", "tag", image_name, f"{newtag}:{version}"])
+        run(
+            [
+                self.engine,
+                "image",
+                "tag",
+                image_name,
+                f"{self.registry}/{newtag}:{version}",
+            ]
+        )
 
     def push_image(self, image_tag):
         """
