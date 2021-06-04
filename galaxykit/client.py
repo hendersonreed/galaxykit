@@ -58,7 +58,7 @@ class GalaxyClient:
             if container_engine:
                 container_registry = (
                     container_registry
-                    or urlparse(self.galaxy_root).netloc.split(":") + ":5001"
+                    or urlparse(self.galaxy_root).netloc.split(":")[0] + ":5001"
                 )
 
                 self.docker_client = dockerutils.DockerClient(
