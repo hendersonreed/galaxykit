@@ -56,9 +56,9 @@ class DockerClient:
         """
         run([self.engine, "pull", self.registry + image_name])
 
-    def tag_image(self, image_name, newtag, version="latest"):
+    def tag_image(self, image_name, newtag):
         """
-        Tags an image with the given tag
+        Tags an image with the given tag (prepends the registry to the tag.)
         """
         run(
             [
@@ -66,12 +66,12 @@ class DockerClient:
                 "image",
                 "tag",
                 image_name,
-                f"{self.registry}/{newtag}:{version}",
+                f"{self.registry}/{newtag}",
             ]
         )
 
     def push_image(self, image_tag):
         """
-        Pushes an image
+        Pushes an image to the registry
         """
-        run([self.engine, "push", image_tag])
+        run([self.engine, "push", f"{self.registry}/{image_tag}"])
