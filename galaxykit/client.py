@@ -119,9 +119,9 @@ class GalaxyClient:
         """pulls an image with the given credentials"""
         return self.docker_client.pull_image(image_name)
 
-    def tag_image(self, image_name, newtag, version="latest"):
-        """tags a pulled image with the given newtag and version"""
-        return self.docker_client.tag_image(image_name, newtag, version=version)
+    def tag_image(self, image_name, newtag):
+        """tags a pulled image with the given newtag"""
+        return self.docker_client.tag_image(image_name, newtag)
 
     def push_image(self, image_tag):
         """pushs a image"""
