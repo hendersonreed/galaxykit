@@ -13,6 +13,7 @@ class DockerClient:
 
     engine = ""
     registry = ""
+    tls_verify = True
 
     def __init__(
         self, auth=None, engine="podman", registry="docker.io/library/", tls_verify=True
@@ -24,6 +25,7 @@ class DockerClient:
         """
         self.engine = engine
         self.registry = registry
+        self.tls_verify = tls_verify
 
         if auth:  # we only need to auth if creds are supplied
             if engine == "podman":
@@ -54,7 +56,10 @@ class DockerClient:
         """
         pull an image from the configured default registry
         """
-        run([self.engine, "pull", self.registry + image_name])
+        if self.engine == "podman" and not self.tls_verify:
+            run([self.engine, "pull", self.registry + image_name, "--tls-verify=False"])
+        else:
+            run([self.engine, "pull", self.registry + image_name])
 
     def tag_image(self, image_name, newtag):
         """
@@ -74,4 +79,14 @@ class DockerClient:
         """
         Pushes an image to the registry
         """
-        run([self.engine, "push", f"{self.registry}/{image_tag}"])
+        if self.engine == "podman" and not self.tls_verify:
+            run(
+                [
+                    self.engine,
+                    "push",
+                    f"{self.registry}/{image_tag}",
+                    "--tls-verify=False",
+                ]
+            )
+        else:
+            run([self.engine, "push", f"{self.registry}/{image_tag}"])
