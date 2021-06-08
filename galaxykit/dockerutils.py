@@ -74,7 +74,7 @@ class DockerClient:
             f"{self.registry}/{image_tag}",
         ]
 
-        if self.engine == "podman" and not self.tls_verify:
+        if self.engine == "podman":
             run_args.append(f"--tls-verify={self.tls_verify}")
 
         run(run_args)
