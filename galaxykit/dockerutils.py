@@ -28,28 +28,17 @@ class DockerClient:
         self.tls_verify = tls_verify
 
         if auth:  # we only need to auth if creds are supplied
+            run_args = [
+                engine,
+                "login",
+                registry,
+                "--username",
+                auth[0],
+                "--password",
+                auth[1],
+            ]
             if engine == "podman":
-                run_args = [
-                    engine,
-                    "login",
-                    registry,
-                    "--username",
-                    auth[0],
-                    "--password",
-                    auth[1],
-                    f"--tls-verify={tls_verify}"  # this is only valid/necessary
-                    # with podman
-                ]
-            else:
-                run_args = [
-                    engine,
-                    "login",
-                    registry,
-                    "--username",
-                    auth[0],
-                    "--password",
-                    auth[1],
-                ]
+                run_args.append(f"--tls-verify={tls_verify}")
             run(run_args)
 
     def pull_image(self, image_name):
@@ -79,14 +68,13 @@ class DockerClient:
         """
         Pushes an image to the registry
         """
+        run_args = [
+            self.engine,
+            "push",
+            f"{self.registry}/{image_tag}",
+        ]
+
         if self.engine == "podman" and not self.tls_verify:
-            run(
-                [
-                    self.engine,
-                    "push",
-                    f"{self.registry}/{image_tag}",
-                    "--tls-verify=False",
-                ]
-            )
-        else:
-            run([self.engine, "push", f"{self.registry}/{image_tag}"])
+            run_args.append(f"--tls-verify={self.tls_verify}")
+
+        run(run_args)
